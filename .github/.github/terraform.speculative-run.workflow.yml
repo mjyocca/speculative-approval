@@ -2,4 +2,29 @@
 ---
 name: Terraform Speculative Approval Run
 
+on:
+  pull_request: # Trigger on pull requests
+    branches:
+      - main
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Tests
+        run: echo "Running tests..."
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: dev  # Dynamic environment name based on branch name
+      # url: https://example.com/${{ github.head_ref }} # Optional URL for the environment
+    steps:
+      - name: Wait for Approval
+        run: echo "Awaiting approval for deployment to environment ${{ github.head_ref }}-env..."
+      - name: Deploy to Environment
+        run: echo "Deploying to ${{ github.head_ref }}-env..."
